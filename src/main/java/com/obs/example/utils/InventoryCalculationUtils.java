@@ -13,30 +13,20 @@ public final class InventoryCalculationUtils {
     }
 
     public static int calculateStockQuantity(List<Inventory> inventories, List<Order> orders) {
-        int currentQuantity = 0;
+        int incomingTotal = inventories.stream()
+                .filter(inv -> inv.getType() == InventoryType.T)
+                .mapToInt(Inventory::getQty)
+                .sum();
 
-        currentQuantity = calculateInventoryAdjustments(currentQuantity, inventories);
+        int outgoingTotal = inventories.stream()
+                .filter(inv -> inv.getType() == InventoryType.W)
+                .mapToInt(Inventory::getQty)
+                .sum();
 
-        currentQuantity = subtractOrders(currentQuantity, orders);
+        int ordersTotal = orders.stream()
+                .mapToInt(Order::getQty)
+                .sum();
 
-        return currentQuantity;
-    }
-
-    private static int calculateInventoryAdjustments(int currentQuantity, List<Inventory> inventories) {
-        for (Inventory inventory : inventories) {
-            if (inventory.getType() == InventoryType.T) {
-                currentQuantity += inventory.getQty();
-            } else if (inventory.getType() == InventoryType.W) {
-                currentQuantity -= inventory.getQty();
-            }
-        }
-        return currentQuantity;
-    }
-
-    private static int subtractOrders(int currentQuantity, List<Order> orders) {
-        for (Order order : orders) {
-            currentQuantity -= order.getQuantity();
-        }
-        return currentQuantity;
+        return incomingTotal - outgoingTotal - ordersTotal;
     }
 }

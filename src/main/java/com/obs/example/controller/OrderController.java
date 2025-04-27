@@ -11,10 +11,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/api/orders")
 @RequiredArgsConstructor
 public class OrderController {
 
@@ -74,19 +75,36 @@ public class OrderController {
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponseDto> saveOrder(@RequestParam(required = false) String OrderId, @Valid @RequestBody OrderDto orderDto) {
+    public ResponseEntity<BaseResponseDto> saveOrder(@RequestParam(required = false) String orderId, @Valid @RequestBody OrderDto orderDto) {
         try {
-            orderService.saveOrder(OrderId, orderDto);
-            return ResponseEntity.status(HttpStatus.OK).body(
+            orderService.saveOrder(orderId, orderDto);
+
+            if (StringUtils.hasText(orderId)) {
+                return ResponseEntity.status(HttpStatus.OK).body(
                     BaseResponseDto.builder()
                             .responseCode("00")
-                            .responseMessage("Order add successfully")
+                            .responseMessage("Order updated successfully")
                             .build()
             );
+            } else {
+                return ResponseEntity.status(HttpStatus.CREATED).body(
+                        BaseResponseDto.builder()
+                                .responseCode("00")
+                                .responseMessage("Order added successfully")
+                                .build()
+                );
+            }
         } catch (BadRequestException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     BaseResponseDto.builder()
                             .responseCode("400")
+                            .responseMessage(e.getLocalizedMessage())
+                            .build()
+            );
+        } catch (ResourceNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    BaseResponseDto.builder()
+                            .responseCode("404")
                             .responseMessage(e.getLocalizedMessage())
                             .build()
             );
@@ -102,11 +120,11 @@ public class OrderController {
     }
 
 
-    @DeleteMapping
-    public ResponseEntity<BaseResponseDto> deleteItem(@RequestParam String orderId) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<BaseResponseDto> deleteItem(@RequestParam String orderNo) {
         try {
-            orderService.deleteOrder(orderId);
-            return ResponseEntity.status(HttpStatus.OK).body(
+            orderService.deleteOrder(orderNo);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
                     BaseResponseDto.builder()
                             .responseCode("00")
                             .responseMessage("Order deleted successfully")

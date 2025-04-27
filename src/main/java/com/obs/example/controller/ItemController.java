@@ -21,7 +21,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/items")
+@RequestMapping("/api/items")
 @RequiredArgsConstructor
 public class ItemController {
 
@@ -84,19 +84,21 @@ public class ItemController {
     public ResponseEntity<BaseResponseDto> saveItem(@RequestParam(required = false) Long id, @Valid @RequestBody ItemDto itemDto) {
         try {
             itemService.saveItem(id, itemDto);
-
-            String msg;
             if (id != null) {
-                msg = "Item edited successfully";
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        BaseResponseDto.builder()
+                                .responseCode("00")
+                                .responseMessage("Item updated successfully")
+                                .build()
+                );
             } else {
-                msg = "Item saved successfully";
+                return ResponseEntity.status(HttpStatus.CREATED).body(
+                        BaseResponseDto.builder()
+                                .responseCode("00")
+                                .responseMessage("Item added successfully")
+                                .build()
+                );
             }
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    BaseResponseDto.builder()
-                            .responseCode("00")
-                            .responseMessage(msg)
-                            .build()
-            );
         } catch (BadRequestException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     BaseResponseDto.builder()
@@ -116,11 +118,11 @@ public class ItemController {
     }
 
 
-    @DeleteMapping
+    @DeleteMapping("/delete")
     public ResponseEntity<BaseResponseDto> deleteItem(@RequestParam Long id) {
         try {
             itemService.deleteItem(id);
-            return ResponseEntity.status(HttpStatus.OK).body(
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
                     BaseResponseDto.builder()
                             .responseCode("00")
                             .responseMessage("Item deleted successfully")

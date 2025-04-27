@@ -54,6 +54,7 @@ public class OrderService {
 
         if (orderNo == null || orderNo.isEmpty()) {
             order = new Order();
+            order.setOrderNo(orderDto.getOrderNo());
         } else {
             order = orderRepository.findByOrderNo(orderNo)
                     .orElseThrow(() -> new ResourceNotFoundException("Order not found with ID: " + orderNo));
@@ -68,13 +69,13 @@ public class OrderService {
 
 
 
-        if (getItemStock(orderDto.getItemId()) < orderDto.getQuantity()) {
+        if (getItemStock(orderDto.getItemId()) < orderDto.getQty()) {
             throw new BadRequestException("Insufficient stock for item ID: " + orderDto.getItemId() + ". Available: " + getItemStock(orderDto.getItemId()));
         }
 
         order.setOrderNo(orderDto.getOrderNo());
         order.setItem(item);
-        order.setQuantity(orderDto.getQuantity());
+        order.setQty(orderDto.getQty());
         order.setPrice(orderDto.getPrice());
 
         return orderRepository.save(order);
@@ -93,7 +94,7 @@ public class OrderService {
         response.setOrderNo(order.getOrderNo());
         response.setItemId(order.getItem().getId());
         response.setPrice(order.getPrice());
-        response.setQuantity(order.getQuantity());
+        response.setQty(order.getQty());
         return response;
     }
 

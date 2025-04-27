@@ -11,7 +11,6 @@ import lombok.Data;
 public class Inventory {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @PositiveOrZero(message = "Quantity must be zero or positive")

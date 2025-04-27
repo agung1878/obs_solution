@@ -14,7 +14,7 @@ public class Order {
     private String orderNo;
 
     @Positive(message = "Quantity must be positive")
-    private int quantity;
+    private int qty;
 
     @Positive(message = "Price must be positive")
     private Integer price;

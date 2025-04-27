@@ -3,8 +3,6 @@ package com.obs.example.controller;
 import com.obs.example.dto.BaseResponseDto;
 import com.obs.example.dto.InventoryDto;
 import com.obs.example.dto.InventoryResponseDto;
-import com.obs.example.dto.ItemResponseDto;
-import com.obs.example.entity.Inventory;
 import com.obs.example.exception.BadRequestException;
 import com.obs.example.exception.ResourceNotFoundException;
 import com.obs.example.service.InventoryService;
@@ -19,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/inventory")
+@RequestMapping("/api/inventories")
 @RequiredArgsConstructor
 public class InventoryController {
 
@@ -81,17 +79,35 @@ public class InventoryController {
     @PostMapping
     public ResponseEntity<BaseResponseDto> saveInventory(@RequestParam(required = false) Long id, @Valid @RequestBody InventoryDto inventoryDto) {
         try {
+
             inventoryService.saveInventory(id, inventoryDto);
-            return ResponseEntity.status(HttpStatus.OK).body(
-                    BaseResponseDto.builder()
-                            .responseCode("00")
-                            .responseMessage("Inventory add successfully")
-                            .build()
-            );
+            if (id != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(
+                        BaseResponseDto.builder()
+                                .responseCode("00")
+                                .responseMessage("Inventory updated successfully")
+                                .build()
+                );
+            } else {
+                return ResponseEntity.status(HttpStatus.CREATED).body(
+                        BaseResponseDto.builder()
+                                .responseCode("00")
+                                .responseMessage("Inventory added successfully")
+                                .build()
+                );
+            }
+
         } catch (BadRequestException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     BaseResponseDto.builder()
                             .responseCode("400")
+                            .responseMessage(e.getLocalizedMessage())
+                            .build()
+            );
+        } catch (ResourceNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    BaseResponseDto.builder()
+                            .responseCode("404")
                             .responseMessage(e.getLocalizedMessage())
                             .build()
             );
@@ -105,11 +121,11 @@ public class InventoryController {
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<BaseResponseDto> deleteInventory(@PathVariable Long id) {
+    @DeleteMapping("/delete")
+    public ResponseEntity<BaseResponseDto> deleteInventory(@RequestParam Long id) {
         try {
             inventoryService.deleteInventory(id);
-            return ResponseEntity.status(HttpStatus.OK).body(
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(
                     BaseResponseDto.builder()
                             .responseCode("00")
                             .responseMessage("Inventory deleted successfully")

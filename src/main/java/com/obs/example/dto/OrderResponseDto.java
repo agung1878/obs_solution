@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class OrderResponseDto {
     private String orderNo;
-    private int quantity;
+    private int qty;
     private double price;
     private Long itemId;
 

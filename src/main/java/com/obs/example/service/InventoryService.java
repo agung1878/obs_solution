@@ -54,8 +54,8 @@ public class InventoryService {
 
         if (id == null) {
             inventory = new Inventory();
-
-            if (inventoryDto.getType().equals(InventoryType.W) && getItemStock(inventoryDto.getItemId()) < inventoryDto.getQuantity()) {
+            inventory.setId(inventoryDto.getId());
+            if (inventoryDto.getType().equals(InventoryType.W) && getItemStock(inventoryDto.getItemId()) < inventoryDto.getQty()) {
                 throw new BadRequestException("Insufficient stock for withdrawal item with id " + inventoryDto.getItemId() + " stock = " + getItemStock(inventoryDto.getItemId()));
             }
         } else {
@@ -69,7 +69,7 @@ public class InventoryService {
 
         inventory.setItem(item);
         inventory.setType(inventoryDto.getType());
-        inventory.setQty(inventoryDto.getQuantity());
+        inventory.setQty(inventoryDto.getQty());
 
         inventoryRepository.save(inventory);
     }

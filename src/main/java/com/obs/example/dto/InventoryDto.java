@@ -14,7 +14,7 @@ public class InventoryDto {
     private Long itemId;
 
     @PositiveOrZero(message = "Quantity must be zero or positive")
-    private int quantity;
+    private int qty;
 
     @NotNull(message = "Type is mandatory")
     private InventoryType type;

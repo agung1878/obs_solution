@@ -12,7 +12,7 @@ public class OrderDto {
     private Long itemId;
 
     @Positive(message = "Quantity must be positive")
-    private int quantity;
+    private int qty;
 
     @Positive(message = "Price must be positive")
     private Integer price;
