@@ -71,3 +71,49 @@ All responses use the standard format:
 | POST   | `/api/orders`                   | `{ "orderNo": "O1", "itemId": 1, "qty": 2, "price": 5 }` | 201 Created | Create new order |
 | POST   | `/api/orders?orderId=O1         | `{ "orderNo": "O1", "itemId": 1, "qty": 4, "price": 5 }` | 200 OK | Update existing order |
 | DELETE | `/api/orders/delete?orderNo=O1` | -                                                        | 204 No Content | Delete order by order number |
+
+## Example Successful Response Pagination
+`"responseCode": "00",
+    "responseMessage": "success",
+    "data": {
+        "content": [
+            {
+                "id": 1,
+                "name": "Pen",
+                "price": 5,
+                "stock": 0
+            }
+        ],
+        "pageable": {
+            "pageNumber": 0,
+            "pageSize": 10,
+            "sort": {
+                "empty": true,
+                "sorted": false,
+                "unsorted": true
+            },
+            "offset": 0,
+            "paged": true,
+            "unpaged": false
+        },
+        "last": true,
+        "totalElements": 1,
+        "totalPages": 1,
+        "size": 10,
+        "number": 0,
+        "sort": {
+            "empty": true,
+            "sorted": false,
+            "unsorted": true
+        },
+        "first": true,
+        "numberOfElements": 1,
+        "empty": false
+    }
+}`
+
+## Example Error Response
+`{
+    "responseCode": "404",
+    "responseMessage": "Order not found with ID: O1"
+}`
